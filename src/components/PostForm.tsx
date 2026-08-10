@@ -13,7 +13,7 @@ import { AreaMapPicker } from './AreaMapPicker';
 
 const MAX_BODY_LENGTH = 80;
 const LAST_AREA_KEY = 'imacocos:last-area';
-const PUBLIC_SITE_URL = 'https://imacocos.pages.dev';
+const PUBLIC_SITE_URL = 'https://omiomi79.github.io/imacocos/';
 const X_INTENT_URL = 'https://x.com/intent/post';
 
 export function PostForm() {
@@ -33,12 +33,6 @@ export function PostForm() {
   const selectedPlace = selectedArea ? `${selectedArea.short}${cell ? ` ${cell}` : ''}` : '';
   const selectedMapCardImage = selectedArea ? mapCardImage(selectedArea.id, cell) : null;
 
-  function buildShareUrl(): string {
-    const params = new URLSearchParams({ area, status: String(status) });
-    if (cell) params.set('cell', cell);
-    return `${PUBLIC_SITE_URL}/share?${params}`;
-  }
-
   function buildPostText(): string {
     const currentStatus = statusMeta(status ?? 2);
     const place = `${selectedArea?.short ?? area}${cell ? ` ${cell}` : ''}`;
@@ -53,7 +47,7 @@ export function PostForm() {
   }
 
   function buildXIntentUrl(): string {
-    const params = new URLSearchParams({ text: buildPostText(), url: buildShareUrl() });
+    const params = new URLSearchParams({ text: buildPostText(), url: PUBLIC_SITE_URL });
     return `${X_INTENT_URL}?${params}`;
   }
 
@@ -158,7 +152,7 @@ export function PostForm() {
               <strong>
                 {selectedPlace}で{selectedStatus.label}｜CoCoS
               </strong>
-              <span>imacocos.pages.dev</span>
+              <span>omiomi79.github.io/imacocos</span>
             </div>
           </div>
         </section>
