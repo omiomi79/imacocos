@@ -1,4 +1,5 @@
 import { NOTES } from './areas';
+import { assetPath } from './assetPath';
 import { PostForm } from './components/PostForm';
 
 export default function App() {
@@ -6,9 +7,9 @@ export default function App() {
     <div className="app">
       <header className="header">
         <div className="brand-lockup">
-          <img className="brand-mark" src="/brand/cocos-mark.webp" alt="" aria-hidden="true" />
+          <img className="brand-mark" src={assetPath('/brand/cocos-mark.webp')} alt="" aria-hidden="true" />
           <div className="brand-copy">
-            <img className="brand-wordmark" src="/brand/cocos-wordmark.webp" alt="CoCoS" />
+            <img className="brand-wordmark" src={assetPath('/brand/cocos-wordmark.webp')} alt="CoCoS" />
             <p>COSPLAY LOCATION SIGNAL</p>
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   mapCells,
   statusMeta,
 } from '../areas';
+import { assetPath } from '../assetPath';
 import { AreaMapPicker } from './AreaMapPicker';
 
 const MAX_BODY_LENGTH = 80;
@@ -148,7 +149,10 @@ export function PostForm() {
           <p className="share-preview-text">{buildPostText()}</p>
           <div className="share-card-preview">
             {selectedArea.map && (
-              <img src={selectedMapCardImage ?? selectedArea.map.image} alt={`${selectedPlace}の選択位置`} />
+              <img
+                src={assetPath(selectedMapCardImage ?? selectedArea.map.image)}
+                alt={`${selectedPlace}の選択位置`}
+              />
             )}
             <div className="share-card-copy">
               <strong>
@@ -171,7 +175,7 @@ export function PostForm() {
           if (canSubmit) localStorage.setItem(LAST_AREA_KEY, area);
         }}
       >
-        <img className="x-submit-logo" src="/brand/x-post-button.webp" alt="" aria-hidden="true" />
+        <img className="x-submit-logo" src={assetPath('/brand/x-post-button.webp')} alt="" aria-hidden="true" />
         <span className="x-submit-label">Xに投稿！</span>
         <span aria-hidden="true">↗</span>
       </a>

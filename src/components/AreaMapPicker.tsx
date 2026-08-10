@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { mapCells, type Area } from '../areas';
+import { assetPath } from '../assetPath';
 
 type Props = {
   area: Area;
@@ -19,7 +20,7 @@ export function AreaMapPicker({ area, value, onChange }: Props) {
       <div className="map-picker map-guide">
         <p className="field-label">エリアガイド</p>
         <div className="map-stage">
-          <img src={map.image} alt={`${area.label}の案内図`} />
+          <img src={assetPath(map.image)} alt={`${area.label}の案内図`} />
         </div>
         <p className="map-selection">{'guide' in map ? map.guide : 'エリアの案内図です。'}</p>
       </div>
@@ -33,7 +34,7 @@ export function AreaMapPicker({ area, value, onChange }: Props) {
       </p>
       <p className="map-help">だいたいの位置をタップしてください。</p>
       <div className="map-stage">
-        <img src={map.image} alt={`${area.label}の見取り図`} />
+        <img src={assetPath(map.image)} alt={`${area.label}の見取り図`} />
         <svg
           className="map-grid"
           viewBox="0 0 100 100"

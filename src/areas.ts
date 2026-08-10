@@ -3,6 +3,10 @@
 // id は D1 に保存される値なので、一度使った id は変更しないこと（過去投稿と紐付かなくなる）。
 // C108 公式案内: https://www.comiket.co.jp/info-p/
 
+// 画像パスはルート相対で持つ。GitHub Pages のサブパスは表示側の assetPath() で付ける
+// （このファイルは scripts/generate-map-cards.mjs から Node で直接読まれるため、
+//  import.meta.env をここで使ってはいけない）
+
 export type Point = { x: number; y: number };
 
 /** 見取り図の上に置く四角形。斜め俯瞰の絵に合わせるため、正方形ではなく任意の四角形で持つ。
