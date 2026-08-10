@@ -24,11 +24,11 @@ export function fetchPosts(hours: number, area: string | null): Promise<{ posts:
   return request<{ posts: Post[]; now: number }>(`/api/posts?${params}`);
 }
 
-export async function createPost(input: { area: string; crowd: number; body: string }): Promise<Post> {
+export async function createPost(input: { area: string; cell: string; status: number; body: string }): Promise<Post> {
   const data = await request<{ post: Post }>('/api/posts', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(input),
+    body: JSON.stringify({ area: input.area, cell: input.cell, crowd: input.status, body: input.body }),
   });
   return data.post;
 }

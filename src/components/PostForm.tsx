@@ -1,105 +1,181 @@
 import { useState } from 'react';
-import { AREAS, AREA_GROUPS, CROWD_LEVELS } from '../areas';
-import { createPost } from '../api';
-import type { Post } from '../types';
+import {
+  AREAS,
+  COSPLAYER_STATUSES,
+  getArea,
+  isValidArea,
+  mapCardImage,
+  mapCells,
+  statusMeta,
+} from '../areas';
+import { AreaMapPicker } from './AreaMapPicker';
 
 const MAX_BODY_LENGTH = 80;
 const LAST_AREA_KEY = 'imacocos:last-area';
+const PUBLIC_SITE_URL = 'https://imacocos.pages.dev';
+const X_INTENT_URL = 'https://x.com/intent/post';
 
-type Props = {
-  onPosted: (post: Post) => void;
-};
-
-export function PostForm({ onPosted }: Props) {
+export function PostForm() {
   // 同じ場所から続けて投稿することが多いので、前回のエリアを覚えておく
-  const [area, setArea] = useState(() => localStorage.getItem(LAST_AREA_KEY) ?? '');
-  const [crowd, setCrowd] = useState<number | null>(null);
+  const [area, setArea] = useState(() => {
+    const saved = localStorage.getItem(LAST_AREA_KEY) ?? '';
+    return isValidArea(saved) ? saved : '';
+  });
+  const [cell, setCell] = useState('');
+  const [status, setStatus] = useState<number | null>(null);
   const [body, setBody] = useState('');
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const canSubmit = area !== '' && crowd !== null && !sending;
+  const selectedArea = getArea(area);
+  const needsCell = selectedArea?.map ? mapCells(selectedArea.map).length > 0 : false;
+  const canSubmit = area !== '' && (!needsCell || cell !== '') && status !== null;
+  const selectedStatus = status === null ? null : statusMeta(status);
+  const selectedPlace = selectedArea ? `${selectedArea.short}${cell ? ` ${cell}` : ''}` : '';
+  const selectedMapCardImage = selectedArea ? mapCardImage(selectedArea.id, cell) : null;
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    if (!canSubmit || crowd === null) return;
-
-    setSending(true);
-    setError(null);
-    try {
-      const post = await createPost({ area, crowd, body });
-      localStorage.setItem(LAST_AREA_KEY, area);
-      setBody('');
-      setCrowd(null);
-      onPosted(post);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : '投稿できませんでした');
-    } finally {
-      setSending(false);
-    }
+  function buildShareUrl(): string {
+    const params = new URLSearchParams({ area, status: String(status) });
+    if (cell) params.set('cell', cell);
+    return `${PUBLIC_SITE_URL}/share?${params}`;
   }
 
+  function buildPostText(): string {
+    const currentStatus = statusMeta(status ?? 2);
+    const place = `${selectedArea?.short ?? area}${cell ? ` ${cell}` : ''}`;
+    return [
+      `📍 ${place}`,
+      `${currentStatus.emoji} ${currentStatus.label}`,
+      body.trim() || null,
+      '#ImaCoCoS',
+    ]
+      .filter((line): line is string => line !== null)
+      .join('\n');
+  }
+
+  function buildXIntentUrl(): string {
+    const params = new URLSearchParams({ text: buildPostText(), url: buildShareUrl() });
+    return `${X_INTENT_URL}?${params}`;
+  }
+
+  const xIntentUrl = canSubmit ? buildXIntentUrl() : undefined;
+
   return (
-    <form className="form card" onSubmit={handleSubmit}>
-      <label className="field">
-        <span className="field-label">どこ？</span>
-        <select className="select" value={area} onChange={(e) => setArea(e.target.value)}>
-          <option value="">エリアを選ぶ</option>
-          {AREA_GROUPS.map((group) => (
-            <optgroup key={group} label={group}>
-              {AREAS.filter((a) => a.group === group).map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.label}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </label>
+    <form className="form card">
+      <div className="form-intro">
+        <p className="kicker">NOW / WHERE / STATUS</p>
+        <h1>いま、ここっす！！</h1>
+        <p>場所と状態を選ぶだけ。投稿前に内容を確認できます。</p>
+      </div>
 
       <div className="field">
-        <span className="field-label">混み具合は？</span>
-        <div className="crowd-picker">
-          {CROWD_LEVELS.map((level) => (
+        <label className="field-label" htmlFor="area-select">
+          <span className="step-index">01</span>
+          <span>場所</span>
+        </label>
+        <select
+          id="area-select"
+          className="select"
+          value={area}
+          onChange={(e) => {
+            setArea(e.target.value);
+            setCell('');
+          }}
+        >
+          <option value="">エリアを選ぶ</option>
+          {AREAS.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+        {selectedArea && (
+          <span className="area-meta">
+            {selectedArea.floor}／1日目 {selectedArea.hours.day1}／2日目 {selectedArea.hours.day2}
+          </span>
+        )}
+      </div>
+
+      {selectedArea?.map && <AreaMapPicker area={selectedArea} value={cell} onChange={setCell} />}
+
+      <div className="field">
+        <div className="field-label">
+          <span className="step-index">02</span>
+          <span>コスプレイヤーさんの状態</span>
+        </div>
+        <div className="status-picker">
+          {COSPLAYER_STATUSES.map((item) => (
             <button
-              key={level.value}
+              key={item.value}
               type="button"
-              className={`crowd-btn crowd-${level.value} ${crowd === level.value ? 'is-active' : ''}`}
-              onClick={() => setCrowd(level.value)}
-              aria-pressed={crowd === level.value}
+              className={`status-btn status-${item.value} ${status === item.value ? 'is-active' : ''}`}
+              onClick={() => setStatus(item.value)}
+              aria-pressed={status === item.value}
             >
-              <span className="crowd-emoji" aria-hidden="true">
-                {level.emoji}
+              <span className="status-glyph" aria-hidden="true">
+                {item.emoji}
               </span>
-              <span className="crowd-label">{level.label}</span>
-              <span className="crowd-hint">{level.hint}</span>
+              <span className="status-copy">
+                <span className="status-code">{item.code}</span>
+                <span className="status-label">{item.label}</span>
+              </span>
             </button>
           ))}
         </div>
       </div>
 
-      <label className="field">
-        <span className="field-label">
-          ひとこと <span className="optional">（任意）</span>
+      <div className="field">
+        <label className="field-label" htmlFor="post-note">
+          <span className="step-index">03</span>
+          <span>
+            ひとこと <span className="optional">任意</span>
+          </span>
           <span className="counter">
             {body.length}/{MAX_BODY_LENGTH}
           </span>
-        </span>
+        </label>
         <textarea
+          id="post-note"
           className="textarea"
           value={body}
           maxLength={MAX_BODY_LENGTH}
           rows={2}
-          placeholder="例: 艦これ勢が集まってる / 待機列は建物沿い"
           onChange={(e) => setBody(e.target.value)}
         />
-      </label>
+      </div>
 
-      {error && <p className="error" role="alert">{error}</p>}
+      {canSubmit && selectedArea && selectedStatus && (
+        <section className="share-preview" aria-label="Xへの投稿プレビュー">
+          <p className="share-preview-label">PREVIEW // X POST</p>
+          <p className="share-preview-text">{buildPostText()}</p>
+          <div className="share-card-preview">
+            {selectedArea.map && (
+              <img src={selectedMapCardImage ?? selectedArea.map.image} alt={`${selectedPlace}の選択位置`} />
+            )}
+            <div className="share-card-copy">
+              <strong>
+                {selectedPlace}で{selectedStatus.label}｜CoCoS
+              </strong>
+              <span>imacocos.pages.dev</span>
+            </div>
+          </div>
+        </section>
+      )}
 
-      <button className="submit" type="submit" disabled={!canSubmit}>
-        {sending ? '送信中…' : 'いまココ！を投稿'}
-      </button>
+      <a
+        className={`submit x-submit ${canSubmit ? '' : 'is-disabled'}`}
+        href={xIntentUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-disabled={!canSubmit}
+        tabIndex={canSubmit ? 0 : -1}
+        onClick={() => {
+          if (canSubmit) localStorage.setItem(LAST_AREA_KEY, area);
+        }}
+      >
+        <img className="x-submit-logo" src="/brand/x-post-button.webp" alt="" aria-hidden="true" />
+        <span className="x-submit-label">Xに投稿！</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <p className="share-note">Xの画面で内容を確認・編集してから投稿されます。</p>
     </form>
   );
 }

@@ -1,4 +1,4 @@
-import { areaLabel, crowdMeta } from '../areas';
+import { areaLabel, statusMeta } from '../areas';
 import { isFresh, timeAgo } from '../format';
 import type { Post } from '../types';
 
@@ -25,17 +25,20 @@ export function PostList({ posts, now, minePostIds, onDelete, onReport, reported
   return (
     <ul className="post-list">
       {posts.map((post) => {
-        const crowd = crowdMeta(post.crowd);
+        const status = statusMeta(post.crowd);
         const mine = minePostIds.includes(post.id);
         const reported = reportedIds.includes(post.id);
 
         return (
-          <li key={post.id} className={`post crowd-${post.crowd} ${isFresh(post.createdAt, now) ? 'is-fresh' : ''}`}>
+          <li key={post.id} className={`post status-${post.crowd} ${isFresh(post.createdAt, now) ? 'is-fresh' : ''}`}>
             <div className="post-head">
-              <span className={`crowd-badge crowd-${post.crowd}`}>
-                <span aria-hidden="true">{crowd.emoji}</span> {crowd.label}
+              <span className={`status-badge status-${post.crowd}`}>
+                <span aria-hidden="true">{status.emoji}</span> {status.label}
               </span>
-              <span className="post-area">{areaLabel(post.area)}</span>
+              <span className="post-area">
+                {areaLabel(post.area)}
+                {post.cell && <span className="post-cell"> {post.cell}</span>}
+              </span>
               <time className="post-time" dateTime={new Date(post.createdAt).toISOString()}>
                 {timeAgo(post.createdAt, now)}
               </time>

@@ -1,5 +1,5 @@
 // functions/ 直下の "_" 始まりのファイルはルーティングされない共通モジュール。
-import { isValidArea } from '../src/areas';
+import { getArea, isValidArea, isValidCell } from '../src/areas';
 import { NG_WORDS } from './_ngwords';
 
 export interface Env {
@@ -53,7 +53,9 @@ export async function isBanned(env: Env, hash: string): Promise<boolean> {
   return row !== null;
 }
 
-export type ValidationResult = { ok: true; area: string; crowd: number; body: string } | { ok: false; message: string };
+export type ValidationResult =
+  | { ok: true; area: string; cell: string; crowd: number; body: string }
+  | { ok: false; message: string };
 
 /** URL混入はほぼ宣伝スパムなので一律で弾く */
 const URL_PATTERN = /(https?:\/\/|www\.|t\.me\/|line\.me\/|discord\.gg\/)/i;
@@ -64,13 +66,24 @@ export function validatePost(input: unknown): ValidationResult {
   if (typeof input !== 'object' || input === null) {
     return { ok: false, message: 'リクエストの形式が不正です' };
   }
-  const { area, crowd, body } = input as Record<string, unknown>;
+  const { area, cell, crowd, body } = input as Record<string, unknown>;
 
   if (typeof area !== 'string' || !isValidArea(area)) {
     return { ok: false, message: 'エリアを選んでください' };
   }
+
+  // 見取り図があるエリアはマスの指定が必須。まだ図がないエリアは空で受ける
+  const cellValue = typeof cell === 'string' ? cell : '';
+  if (getArea(area)?.map) {
+    if (!isValidCell(area, cellValue)) {
+      return { ok: false, message: 'マップ上の場所を選んでください' };
+    }
+  } else if (cellValue !== '') {
+    return { ok: false, message: 'このエリアでは場所を指定できません' };
+  }
+
   if (typeof crowd !== 'number' || ![1, 2, 3].includes(crowd)) {
-    return { ok: false, message: '混雑度を選んでください' };
+    return { ok: false, message: 'コスプレイヤーさんの状態を選んでください' };
   }
 
   const text = typeof body === 'string' ? body.trim() : '';
@@ -88,7 +101,7 @@ export function validatePost(input: unknown): ValidationResult {
     return { ok: false, message: 'この内容は投稿できません' };
   }
 
-  return { ok: true, area, crowd, body: text };
+  return { ok: true, area, cell: cellValue, crowd, body: text };
 }
 
 /** 連投・大量投稿のチェック。通ったら null、弾くならエラーメッセージ */

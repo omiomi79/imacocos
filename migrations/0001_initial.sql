@@ -1,15 +1,10 @@
--- ImaCoCoS / D1 schema
--- 現在の完成形を確認するためのスキーマスナップショット。
--- 実際の適用は migrations/ と npm run db:migrate(:local) を使う。
-
 CREATE TABLE IF NOT EXISTS posts (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   area         TEXT    NOT NULL,
-  cell         TEXT    NOT NULL DEFAULT '',  -- 見取り図のマス（例 "B3"）。マップ未対応エリアは空
-  crowd        INTEGER NOT NULL,             -- 互換用の列名。1:撮影中 2:交流中 3:移動中
+  crowd        INTEGER NOT NULL,
   body         TEXT    NOT NULL DEFAULT '',
-  client_hash  TEXT    NOT NULL,             -- IP+UAのハッシュ。生IPは保存しない
-  created_at   INTEGER NOT NULL,             -- unix ms
+  client_hash  TEXT    NOT NULL,
+  created_at   INTEGER NOT NULL,
   hidden       INTEGER NOT NULL DEFAULT 0,
   report_count INTEGER NOT NULL DEFAULT 0
 );
@@ -18,7 +13,6 @@ CREATE INDEX IF NOT EXISTS idx_posts_recent ON posts (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_posts_area   ON posts (area, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_posts_client ON posts (client_hash, created_at DESC);
 
--- 同一端末による二重通報を PK で弾く
 CREATE TABLE IF NOT EXISTS reports (
   post_id      INTEGER NOT NULL,
   client_hash  TEXT    NOT NULL,
@@ -26,7 +20,6 @@ CREATE TABLE IF NOT EXISTS reports (
   PRIMARY KEY (post_id, client_hash)
 );
 
--- 手動BAN用。運用で悪質な端末を止めるとき INSERT する
 CREATE TABLE IF NOT EXISTS bans (
   client_hash  TEXT PRIMARY KEY,
   reason       TEXT,

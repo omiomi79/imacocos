@@ -15,6 +15,7 @@ const MAX_ROWS = 200;
 type PostRow = {
   id: number;
   area: string;
+  cell: string;
   crowd: number;
   body: string;
   created_at: number;
@@ -31,14 +32,14 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   const query = area
     ? env.DB.prepare(
-        `SELECT id, area, crowd, body, created_at
+        `SELECT id, area, cell, crowd, body, created_at
            FROM posts
           WHERE hidden = 0 AND created_at > ? AND area = ?
           ORDER BY created_at DESC
           LIMIT ?`,
       ).bind(since, area, MAX_ROWS)
     : env.DB.prepare(
-        `SELECT id, area, crowd, body, created_at
+        `SELECT id, area, cell, crowd, body, created_at
            FROM posts
           WHERE hidden = 0 AND created_at > ?
           ORDER BY created_at DESC
@@ -53,6 +54,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     posts: results.map((r) => ({
       id: r.id,
       area: r.area,
+      cell: r.cell,
       crowd: r.crowd,
       body: r.body,
       createdAt: r.created_at,
@@ -60,7 +62,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   });
 };
 
-/** POST /api/posts  body: { area, crowd, body } */
+/** POST /api/posts  body: { area, cell, crowd, body } */
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   let payload: unknown;
   try {
@@ -87,11 +89,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const inserted = await env.DB.prepare(
-    `INSERT INTO posts (area, crowd, body, client_hash, created_at)
-     VALUES (?, ?, ?, ?, ?)
+    `INSERT INTO posts (area, cell, crowd, body, client_hash, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)
      RETURNING id`,
   )
-    .bind(validated.area, validated.crowd, validated.body, hash, now)
+    .bind(validated.area, validated.cell, validated.crowd, validated.body, hash, now)
     .first<{ id: number }>();
 
   return json(
@@ -99,6 +101,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       post: {
         id: inserted?.id ?? 0,
         area: validated.area,
+        cell: validated.cell,
         crowd: validated.crowd,
         body: validated.body,
         createdAt: now,
