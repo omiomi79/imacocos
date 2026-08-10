@@ -1,0 +1,10 @@
+name = "imacocos"
+compatibility_date = "2026-08-08"
+pages_build_output_dir = "dist"
+
+# database_id は `npm run db:create` の出力を貼る。
+# ローカル開発（--local）ではこの値は使われない。
+[[d1_databases]]
+binding = "DB"
+database_name = "imacocos-db"
+database_id = "REPLACE_AFTER_D1_CREATE"

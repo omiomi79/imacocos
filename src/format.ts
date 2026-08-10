@@ -1,0 +1,16 @@
+/** 「いま」の情報アプリなので、絶対時刻より経過時間のほうが読みやすい */
+export function timeAgo(createdAt: number, now: number): string {
+  const diffSec = Math.max(0, Math.floor((now - createdAt) / 1000));
+
+  if (diffSec < 60) return 'たった今';
+  const min = Math.floor(diffSec / 60);
+  if (min < 60) return `${min}分前`;
+  const hour = Math.floor(min / 60);
+  if (hour < 24) return `${hour}時間前`;
+  return `${Math.floor(hour / 24)}日前`;
+}
+
+/** 5分以内は「まだ生きてる情報」として強調する */
+export function isFresh(createdAt: number, now: number): boolean {
+  return now - createdAt < 5 * 60 * 1000;
+}
