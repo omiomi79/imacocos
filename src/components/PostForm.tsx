@@ -9,11 +9,11 @@ import {
   statusMeta,
 } from '../areas';
 import { assetPath } from '../assetPath';
+import { SITE_URL, sharePageSlug } from '../siteConfig';
 import { AreaMapPicker } from './AreaMapPicker';
 
 const MAX_BODY_LENGTH = 80;
 const LAST_AREA_KEY = 'imacocos:last-area';
-const PUBLIC_SITE_URL = 'https://omiomi79.github.io/imacocos/';
 const X_INTENT_URL = 'https://x.com/intent/post';
 
 export function PostForm() {
@@ -47,7 +47,9 @@ export function PostForm() {
   }
 
   function buildXIntentUrl(): string {
-    const params = new URLSearchParams({ text: buildPostText(), url: PUBLIC_SITE_URL });
+    // ビルド時に生成した、この場所・状態専用のページへ飛ばす（Xのカード画像はそこのOGPで出る）
+    const slug = sharePageSlug(area, cell, status ?? 2);
+    const params = new URLSearchParams({ text: buildPostText(), url: new URL(`s/${slug}/`, SITE_URL).href });
     return `${X_INTENT_URL}?${params}`;
   }
 

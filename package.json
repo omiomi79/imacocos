@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run map:cards && tsc -b && tsc -p tsconfig.functions.json && vite build",
+    "build": "npm run map:cards && tsc -b && tsc -p tsconfig.functions.json && vite build && npm run share:pages",
     "lint": "oxlint",
     "preview": "vite preview",
     "cf:dev": "npm run build && wrangler pages dev --port 8788",
@@ -16,6 +16,7 @@
     "db:migrate": "wrangler d1 migrations apply imacocos-db --remote",
     "map:optimize": "node scripts/optimize-map.mjs",
     "map:cards": "node scripts/generate-map-cards.mjs",
+    "share:pages": "node scripts/generate-share-pages.mjs",
     "deploy": "npm run build && wrangler pages deploy"
   },
   "dependencies": {
