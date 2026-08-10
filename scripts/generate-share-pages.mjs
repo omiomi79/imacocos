@@ -72,7 +72,9 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
       section { padding: 20px; }
       h1 { margin: 0 0 8px; font-size: 22px; }
       p { margin: 0 0 20px; color: #5e605b; font-size: 14px; }
-      a { display: inline-block; padding: 12px 18px; color: #fffefa; background: #171816;
+      .who { margin: 0 0 6px; color: #171816; font-size: 14px; font-weight: 700; }
+      .who a { color: #171816; }
+      .cta { display: inline-block; padding: 12px 18px; color: #fffefa; background: #171816;
         border-radius: 8px; font-weight: 700; text-decoration: none; }
     </style>
   </head>
@@ -81,11 +83,32 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
       <header><img src="${safe.icon}" alt=""> CoCoS // LOCATION SIGNAL</header>
       ${safe.image ? `<img src="${safe.image}" alt="${safe.imageAlt}">` : ''}
       <section>
+        <p class="who" id="who" hidden></p>
         <h1>${safe.title}</h1>
         <p>${safe.description}</p>
-        <a href="${safe.site}">CoCoSで自分の場所を共有する</a>
+        <a class="cta" href="${safe.site}">CoCoSで自分の場所を共有する</a>
       </section>
     </main>
+    <script>
+      // 誰の現在地かは ?u= で受け取る。ページはビルド時に固定されるため、
+      // 表示はここで組み立てる（Xのカード自体には反映されない）。
+      (function () {
+        var id = new URLSearchParams(location.search).get('u') || '';
+        if (!/^[A-Za-z0-9_]{1,15}$/.test(id)) return;
+
+        var link = document.createElement('a');
+        link.href = 'https://x.com/' + id;
+        link.rel = 'noopener noreferrer';
+        link.textContent = '@' + id;
+
+        var line = document.getElementById('who');
+        line.appendChild(link);
+        line.appendChild(document.createTextNode(' さんの現在地'));
+        line.hidden = false;
+
+        document.title = '@' + id + ' / ' + document.title;
+      })();
+    </script>
   </body>
 </html>
 `;

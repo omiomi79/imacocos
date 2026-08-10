@@ -213,7 +213,8 @@ a {
 }
 
 .select,
-.textarea {
+.textarea,
+.text-input {
   width: 100%;
   color: var(--ink);
   background: var(--paper);
@@ -241,8 +242,27 @@ a {
   font-size: 16px;
 }
 
+.text-input {
+  min-height: 54px;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.text-input.is-invalid {
+  border-color: var(--danger);
+}
+
+.field-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .select:focus-visible,
 .textarea:focus-visible,
+.text-input:focus-visible,
 button:focus-visible,
 a:focus-visible,
 .map-cell:focus {

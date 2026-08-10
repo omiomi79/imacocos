@@ -9,11 +9,12 @@ import {
   statusMeta,
 } from '../areas';
 import { assetPath } from '../assetPath';
-import { SITE_URL, sharePageSlug } from '../siteConfig';
+import { SITE_URL, X_ID_PATTERN, normalizeXId, sharePageSlug } from '../siteConfig';
 import { AreaMapPicker } from './AreaMapPicker';
 
 const MAX_BODY_LENGTH = 80;
 const LAST_AREA_KEY = 'imacocos:last-area';
+const X_ID_KEY = 'imacocos:x-id';
 const X_INTENT_URL = 'https://x.com/intent/post';
 
 export function PostForm() {
@@ -25,10 +26,16 @@ export function PostForm() {
   const [cell, setCell] = useState('');
   const [status, setStatus] = useState<number | null>(null);
   const [body, setBody] = useState('');
+  // 毎回打ち直さなくて済むよう、一度入れたIDは端末に残す
+  const [xId, setXId] = useState(() => localStorage.getItem(X_ID_KEY) ?? '');
+
+  const typedXId = xId.trim().replace(/^@/, '');
+  const xIdValid = typedXId === '' || X_ID_PATTERN.test(typedXId);
+  const shareXId = normalizeXId(xId);
 
   const selectedArea = getArea(area);
   const needsCell = selectedArea?.map ? mapCells(selectedArea.map).length > 0 : false;
-  const canSubmit = area !== '' && (!needsCell || cell !== '') && status !== null;
+  const canSubmit = area !== '' && (!needsCell || cell !== '') && status !== null && xIdValid;
   const selectedStatus = status === null ? null : statusMeta(status);
   const selectedPlace = selectedArea ? `${selectedArea.short}${cell ? ` ${cell}` : ''}` : '';
   const selectedMapCardImage = selectedArea ? mapCardImage(selectedArea.id, cell) : null;
@@ -49,7 +56,10 @@ export function PostForm() {
   function buildXIntentUrl(): string {
     // ビルド時に生成した、この場所・状態専用のページへ飛ばす（Xのカード画像はそこのOGPで出る）
     const slug = sharePageSlug(area, cell, status ?? 2);
-    const params = new URLSearchParams({ text: buildPostText(), url: new URL(`s/${slug}/`, SITE_URL).href });
+    const shareUrl = new URL(`s/${slug}/`, SITE_URL);
+    // 誰の現在地かは、ページ側がこのパラメータを読んで表示する
+    if (shareXId) shareUrl.searchParams.set('u', shareXId);
+    const params = new URLSearchParams({ text: buildPostText(), url: shareUrl.href });
     return `${X_INTENT_URL}?${params}`;
   }
 
@@ -139,6 +149,38 @@ export function PostForm() {
         />
       </div>
 
+      <div className="field">
+        <label className="field-label" htmlFor="x-id">
+          <span className="step-index">04</span>
+          <span>
+            XのID <span className="optional">任意</span>
+          </span>
+        </label>
+        <input
+          id="x-id"
+          className={`text-input ${xIdValid ? '' : 'is-invalid'}`}
+          type="text"
+          value={xId}
+          placeholder="@omi_camera"
+          autoComplete="off"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          aria-invalid={!xIdValid}
+          aria-describedby={xIdValid ? 'x-id-help' : 'x-id-error'}
+          onChange={(e) => setXId(e.target.value)}
+        />
+        {xIdValid ? (
+          <p className="map-help" id="x-id-help">
+            入れると、リンク先のページに「@◯◯ さんの現在地」と出ます。
+          </p>
+        ) : (
+          <p className="field-error" id="x-id-error" role="alert">
+            英数字とアンダースコアのみ、15文字までです
+          </p>
+        )}
+      </div>
+
       {canSubmit && selectedArea && selectedStatus && (
         <section className="share-preview" aria-label="Xへの投稿プレビュー">
           <p className="share-preview-label">PREVIEW // X POST</p>
@@ -168,7 +210,9 @@ export function PostForm() {
         aria-disabled={!canSubmit}
         tabIndex={canSubmit ? 0 : -1}
         onClick={() => {
-          if (canSubmit) localStorage.setItem(LAST_AREA_KEY, area);
+          if (!canSubmit) return;
+          localStorage.setItem(LAST_AREA_KEY, area);
+          localStorage.setItem(X_ID_KEY, shareXId);
         }}
       >
         <img className="x-submit-logo" src={assetPath('/brand/x-post-button.webp')} alt="" aria-hidden="true" />
