@@ -55,8 +55,6 @@ export type Area = {
    * 状態の選択も区画の指定も行わず、ひとことだけ添えて投稿する。
    */
   standalone?: boolean;
-  /** 投稿文の先頭に置く記号。省略時は場所を示す 📍 */
-  emoji?: string;
   /** 見取り図がまだ用意できていないエリアは null */
   map: AreaMap | null;
 };
@@ -176,7 +174,6 @@ export const AREAS: Area[] = [
     label: '休憩中',
     short: '休憩中',
     standalone: true,
-    emoji: '☕',
     map: { image: '/maps/rest.webp', guide: '' },
   },
 ];
