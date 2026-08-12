@@ -47,8 +47,16 @@ export type Area = {
   label: string;
   /** 投稿一覧に出す短い名前 */
   short: string;
-  floor: string;
-  hours: { day1: string; day2: string };
+  /** 会場のエリアではない選択肢（休憩中など）は持たない */
+  floor?: string;
+  hours?: { day1: string; day2: string };
+  /**
+   * それ自体が状態を表す選択肢。
+   * 状態の選択も区画の指定も行わず、ひとことだけ添えて投稿する。
+   */
+  standalone?: boolean;
+  /** 投稿文の先頭に置く記号。省略時は場所を示す 📍 */
+  emoji?: string;
   /** 見取り図がまだ用意できていないエリアは null */
   map: AreaMap | null;
 };
@@ -162,6 +170,14 @@ export const AREAS: Area[] = [
       cols: 5,
       rows: 2,
     },
+  },
+  {
+    id: 'rest',
+    label: '休憩中',
+    short: '休憩中',
+    standalone: true,
+    emoji: '☕',
+    map: { image: '/maps/rest.webp', guide: '' },
   },
 ];
 

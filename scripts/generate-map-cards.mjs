@@ -14,6 +14,9 @@ function pointsAttribute(points, width, height) {
 for (const area of AREAS) {
   if (!area.map) continue;
 
+  // 区画を持たないエリア（案内図だけ・休憩中など）は焼き込む対象がない
+  if (mapCells(area.map).length === 0) continue;
+
   const input = join(publicDir, area.map.image.replace(/^\//, ''));
   const metadata = await sharp(input).metadata();
   const width = metadata.width;

@@ -6,9 +6,12 @@
  */
 export const SITE_URL = 'https://omiomi79.github.io/imacocos/';
 
-/** 場所・状態の組み合わせごとに作る共有ページのスラッグ */
-export function sharePageSlug(areaId: string, cell: string, status: number): string {
-  return [areaId, cell.toLowerCase(), String(status)].filter(Boolean).join('-');
+/**
+ * 場所・状態の組み合わせごとに作る共有ページのスラッグ。
+ * 「休憩中」のように状態を持たない選択肢では status に null を渡す。
+ */
+export function sharePageSlug(areaId: string, cell: string, status: number | null): string {
+  return [areaId, cell.toLowerCase(), status === null ? '' : String(status)].filter(Boolean).join('-');
 }
 
 /** Xのハンドルの形式。英数字とアンダースコアのみ、15文字まで */

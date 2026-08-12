@@ -34,28 +34,33 @@ export function PostForm() {
   const xIdValid = xId.trim() === '' || shareXId !== '';
 
   const selectedArea = getArea(area);
-  const needsCell = selectedArea?.map ? mapCells(selectedArea.map).length > 0 : false;
-  const canSubmit = area !== '' && (!needsCell || cell !== '') && status !== null && xIdValid;
+  // 「休憩中」のように、それ自体が状態を表す選択肢では区画も状態も選ばせない
+  const isStandalone = selectedArea?.standalone === true;
+  const needsCell = !isStandalone && selectedArea?.map ? mapCells(selectedArea.map).length > 0 : false;
+  const canSubmit =
+    area !== '' && (!needsCell || cell !== '') && (isStandalone || status !== null) && xIdValid;
   const selectedStatus = status === null ? null : statusMeta(status);
   const selectedPlace = selectedArea ? `${selectedArea.short}${cell ? ` ${cell}` : ''}` : '';
   const selectedMapCardImage = selectedArea ? mapCardImage(selectedArea.id, cell) : null;
 
+  // 状態欄を出さない分、後続の番号を繰り上げる
+  const stepNumbers = isStandalone
+    ? { status: null, note: '02', xId: '03' }
+    : { status: '02', note: '03', xId: '04' };
+
   function buildPostText(): string {
-    const currentStatus = statusMeta(status ?? 2);
     const place = `${selectedArea?.short ?? area}${cell ? ` ${cell}` : ''}`;
-    return [
-      `📍 ${place}`,
-      `${currentStatus.emoji} ${currentStatus.label}`,
-      body.trim() || null,
-      '#ImaCoCoS',
-    ]
+    const headline = `${selectedArea?.emoji ?? '📍'} ${place}`;
+    const statusLine = isStandalone ? null : `${statusMeta(status ?? 2).emoji} ${statusMeta(status ?? 2).label}`;
+
+    return [headline, statusLine, body.trim() || null, '#ImaCoCoS']
       .filter((line): line is string => line !== null)
       .join('\n');
   }
 
   function buildXIntentUrl(): string {
     // ビルド時に生成した、この場所・状態専用のページへ飛ばす（Xのカード画像はそこのOGPで出る）
-    const slug = sharePageSlug(area, cell, status ?? 2);
+    const slug = sharePageSlug(area, cell, isStandalone ? null : (status ?? 2));
     const shareUrl = new URL(`s/${slug}/`, SITE_URL);
     // 誰の現在地かは、ページ側がこのパラメータを読んで表示する
     if (shareXId) shareUrl.searchParams.set('u', shareXId);
@@ -94,50 +99,56 @@ export function PostForm() {
             </option>
           ))}
         </select>
-        {selectedArea && (
+        {selectedArea?.floor && selectedArea.hours && (
           <span className="area-meta">
             {selectedArea.floor}／1日目 {selectedArea.hours.day1}／2日目 {selectedArea.hours.day2}
           </span>
         )}
         {/* JSXの改行は半角スペースになるため、日本語が分かれないよう文字列で渡す */}
-        <p className="field-notice">
-          {'黄色の部分はあくまで想定されるエリアであり、当日の状況により異なる場合がございます。' +
-            'おおよその場所として指定するためにご使用ください。' +
-            'また東7・8エリアについては指定がしかねる点、ご了承ください。'}
-        </p>
+        {!isStandalone && (
+          <p className="field-notice">
+            {'黄色の部分はあくまで想定されるエリアであり、当日の状況により異なる場合がございます。' +
+              'おおよその場所として指定するためにご使用ください。' +
+              'また東7・8エリアについては指定がしかねる点、ご了承ください。'}
+          </p>
+        )}
       </div>
 
-      {selectedArea?.map && <AreaMapPicker area={selectedArea} value={cell} onChange={setCell} />}
+      {!isStandalone && selectedArea?.map && (
+        <AreaMapPicker area={selectedArea} value={cell} onChange={setCell} />
+      )}
 
-      <div className="field">
-        <div className="field-label">
-          <span className="step-index">02</span>
-          <span>現在の状態</span>
+      {!isStandalone && (
+        <div className="field">
+          <div className="field-label">
+            <span className="step-index">{stepNumbers.status}</span>
+            <span>現在の状態</span>
+          </div>
+          <div className="status-picker">
+            {STATUS_OPTIONS.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                className={`status-btn status-${item.value} ${status === item.value ? 'is-active' : ''}`}
+                onClick={() => setStatus(item.value)}
+                aria-pressed={status === item.value}
+              >
+                <span className="status-glyph" aria-hidden="true">
+                  {item.emoji}
+                </span>
+                <span className="status-copy">
+                  <span className="status-code">{item.code}</span>
+                  <span className="status-label">{item.label}</span>
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="status-picker">
-          {STATUS_OPTIONS.map((item) => (
-            <button
-              key={item.value}
-              type="button"
-              className={`status-btn status-${item.value} ${status === item.value ? 'is-active' : ''}`}
-              onClick={() => setStatus(item.value)}
-              aria-pressed={status === item.value}
-            >
-              <span className="status-glyph" aria-hidden="true">
-                {item.emoji}
-              </span>
-              <span className="status-copy">
-                <span className="status-code">{item.code}</span>
-                <span className="status-label">{item.label}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
       <div className="field">
         <label className="field-label" htmlFor="post-note">
-          <span className="step-index">03</span>
+          <span className="step-index">{stepNumbers.note}</span>
           <span>
             ひとこと <span className="optional">任意</span>
           </span>
@@ -157,7 +168,7 @@ export function PostForm() {
 
       <div className="field">
         <label className="field-label" htmlFor="x-id">
-          <span className="step-index">04</span>
+          <span className="step-index">{stepNumbers.xId}</span>
           <span>
             XのID <span className="optional">任意</span>
           </span>
@@ -187,7 +198,7 @@ export function PostForm() {
         )}
       </div>
 
-      {canSubmit && selectedArea && selectedStatus && (
+      {canSubmit && selectedArea && (
         <section className="share-preview" aria-label="Xへの投稿プレビュー">
           <p className="share-preview-label">PREVIEW // X POST</p>
           <p className="share-preview-text">{buildPostText()}</p>
@@ -195,12 +206,14 @@ export function PostForm() {
             {selectedArea.map && (
               <img
                 src={assetPath(selectedMapCardImage ?? selectedArea.map.image)}
-                alt={`${selectedPlace}の選択位置`}
+                alt={isStandalone ? selectedPlace : `${selectedPlace}の選択位置`}
               />
             )}
             <div className="share-card-copy">
               <strong>
-                {selectedPlace}で{selectedStatus.label}｜CoCoS
+                {isStandalone
+                  ? `${selectedPlace}｜CoCoS`
+                  : `${selectedPlace}で${selectedStatus?.label ?? ''}｜CoCoS`}
               </strong>
               <span>omiomi79.github.io/imacocos</span>
             </div>

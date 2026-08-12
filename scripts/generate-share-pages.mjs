@@ -116,29 +116,48 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
 
 let count = 0;
 
+async function writePage({ slug, title, description, image, imageAlt }) {
+  const html = renderPage({
+    title,
+    description,
+    canonical: new URL(`s/${slug}/`, SITE_URL).href,
+    image: image ? absoluteUrl(image) : null,
+    imageAlt,
+  });
+
+  const outDir = join(distDir, 's', slug);
+  await mkdir(outDir, { recursive: true });
+  await writeFile(join(outDir, 'index.html'), html, 'utf8');
+  count += 1;
+}
+
 for (const area of AREAS) {
+  // 「休憩中」のような状態を持たない選択肢は、組み合わせを作らず1ページだけ
+  if (area.standalone) {
+    await writePage({
+      slug: sharePageSlug(area.id, '', null),
+      title: `${area.short}｜CoCoS`,
+      description: `いま「${area.short}」です。`,
+      image: mapCardImage(area.id, ''),
+      imageAlt: area.short,
+    });
+    continue;
+  }
+
   const cells = area.map ? mapCells(area.map) : [];
   // 区画を持たないエリア（案内図だけのエリア）はセルなしの1件として扱う
   const cellIds = cells.length > 0 ? cells.map((cell) => cell.id) : [''];
 
   for (const cell of cellIds) {
     for (const status of STATUS_OPTIONS) {
-      const slug = sharePageSlug(area.id, cell, status.value);
       const place = `${area.short}${cell ? ` ${cell}` : ''}`;
-      const cardImage = mapCardImage(area.id, cell);
-
-      const html = renderPage({
+      await writePage({
+        slug: sharePageSlug(area.id, cell, status.value),
         title: `${place}で${status.label}｜CoCoS`,
         description: `いま「${status.label}」です。`,
-        canonical: new URL(`s/${slug}/`, SITE_URL).href,
-        image: cardImage ? absoluteUrl(cardImage) : null,
+        image: mapCardImage(area.id, cell),
         imageAlt: `${place}の見取り図`,
       });
-
-      const outDir = join(distDir, 's', slug);
-      await mkdir(outDir, { recursive: true });
-      await writeFile(join(outDir, 'index.html'), html, 'utf8');
-      count += 1;
     }
   }
 }
