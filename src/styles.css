@@ -273,6 +273,20 @@ a {
   font-weight: 650;
 }
 
+.copyright {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-tech);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.copyright a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
 .share-length {
   margin: 9px 0 0;
   color: var(--ink-soft);

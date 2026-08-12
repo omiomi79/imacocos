@@ -31,6 +31,13 @@ export default function App() {
         </ul>
         <p>入力内容は保存されず、Xの投稿画面へ渡されます。個人を特定できる情報や誹謗中傷は書かないでください。</p>
         {/* 撮影マナーは、読んでほしい撮影者の目に入る共有ページ側に置いている */}
+        <p className="copyright">
+          © 2026 おみ（
+          <a href="https://x.com/omiomi79" target="_blank" rel="noopener noreferrer">
+            @omiomi79
+          </a>
+          ）
+        </p>
       </footer>
     </div>
   );
