@@ -253,6 +253,19 @@ a {
   border-color: var(--danger);
 }
 
+/* 見取り図の黄色い区画についての但し書き。
+   マップ上の色と同系の下地にして、何の話か一目で結び付くようにする。 */
+.field-notice {
+  margin: 0;
+  padding: 11px 13px;
+  color: var(--ink);
+  background: var(--signal-soft);
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
 .field-error {
   margin: 0;
   color: var(--danger);

@@ -99,6 +99,12 @@ export function PostForm() {
             {selectedArea.floor}／1日目 {selectedArea.hours.day1}／2日目 {selectedArea.hours.day2}
           </span>
         )}
+        {/* JSXの改行は半角スペースになるため、日本語が分かれないよう文字列で渡す */}
+        <p className="field-notice">
+          {'黄色の部分はあくまで想定されるエリアであり、当日の状況により異なる場合がございます。' +
+            'おおよその場所として指定するためにご使用ください。' +
+            'また東7・8エリアについては指定がしかねる点、ご了承ください。'}
+        </p>
       </div>
 
       {selectedArea?.map && <AreaMapPicker area={selectedArea} value={cell} onChange={setCell} />}
