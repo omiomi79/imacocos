@@ -1,0 +1,16 @@
+{
+  "name": "CoCoS - コスプレの場所と状態をXで共有",
+  "short_name": "CoCoS",
+  "description": "コミケ会場での場所と状態を整え、Xの投稿画面へ渡すシンプルな共有ツールです。",
+  "lang": "ja",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f4f3ee",
+  "theme_color": "#ffd21f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
