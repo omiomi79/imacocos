@@ -123,8 +123,9 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
 
         var line = document.getElementById('elapsed');
         var postedAt = new Date(posted * 1000);
-        var clock = postedAt.toLocaleTimeString('ja-JP', {
-          timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit'
+        // 2日間開催で日をまたぐため、日付も添える（例: 8/15 17:20）
+        var clock = postedAt.toLocaleString('ja-JP', {
+          timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
 
         function label(minutes) {
