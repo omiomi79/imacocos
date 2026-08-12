@@ -21,6 +21,8 @@ async function render(size, markRatio, output) {
     create: { width: size, height: size, channels: 4, background: BACKGROUND },
   })
     .composite([{ input: mark, gravity: 'center' }])
+    // 中身は不透明でも、アルファチャンネルが残っているとiOSがアイコンを拾わないことがある
+    .removeAlpha()
     .png()
     .toFile(output);
 
