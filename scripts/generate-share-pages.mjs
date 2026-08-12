@@ -80,6 +80,13 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
       .elapsed span { display: block; margin-top: 4px;
         font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; }
       .elapsed.is-stale { background: #ffe2dd; }
+      .manners { margin: 0 0 20px; padding: 14px 16px; background: #f4f3ee;
+        border: 1.5px solid #171816; border-radius: 10px; }
+      .manners p { margin: 0 0 9px; font-family: ui-monospace, monospace;
+        font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #171816; }
+      .manners ul { margin: 0; padding-left: 20px; }
+      .manners li { margin-bottom: 6px; color: #171816; font-size: 13px; line-height: 1.6; }
+      .manners li:last-child { margin-bottom: 0; }
       .cta { display: inline-block; padding: 12px 18px; color: #fffefa; background: #171816;
         border-radius: 8px; font-weight: 700; text-decoration: none; }
     </style>
@@ -93,6 +100,14 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
         <p class="who" id="who" hidden></p>
         <h1>${safe.title}</h1>
         <p>${safe.description}</p>
+        <div class="manners">
+          <p>撮影のお願い</p>
+          <ul>
+            <li>勝手に列を作らず、まず一声かけてみましょう。</li>
+            <li>撮影は必ず本人の許可を取り、会場のルールを守りましょう。</li>
+            <li>撮影した写真の取り扱い（加工等）は必ずコスプレイヤーさんに確認しましょう。</li>
+          </ul>
+        </div>
         <a class="cta" href="${safe.site}">CoCoSで自分の場所を共有する</a>
       </section>
     </main>
