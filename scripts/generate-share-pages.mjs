@@ -74,6 +74,12 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
       p { margin: 0 0 20px; color: #5e605b; font-size: 14px; }
       .who { margin: 0 0 6px; color: #171816; font-size: 14px; font-weight: 700; }
       .who a { color: #171816; }
+      .elapsed { display: block; margin: 0 0 16px; padding: 16px; color: #171816;
+        background: #ffd21f; border: 2px solid #171816; border-radius: 10px; text-align: center; }
+      .elapsed strong { display: block; font-size: 34px; font-weight: 800; line-height: 1.1; }
+      .elapsed span { display: block; margin-top: 4px;
+        font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .08em; }
+      .elapsed.is-stale { background: #ffe2dd; }
       .cta { display: inline-block; padding: 12px 18px; color: #fffefa; background: #171816;
         border-radius: 8px; font-weight: 700; text-decoration: none; }
     </style>
@@ -83,6 +89,7 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
       <header><img src="${safe.icon}" alt=""> CoCoS // LOCATION SIGNAL</header>
       ${safe.image ? `<img src="${safe.image}" alt="${safe.imageAlt}">` : ''}
       <section>
+        <p class="elapsed" id="elapsed" hidden></p>
         <p class="who" id="who" hidden></p>
         <h1>${safe.title}</h1>
         <p>${safe.description}</p>
@@ -107,6 +114,46 @@ function renderPage({ title, description, canonical, image, imageAlt }) {
         line.hidden = false;
 
         document.title = '@' + id + ' / ' + document.title;
+      })();
+
+      // 投稿からの経過時間。ページは静的なので ?t=（投稿時刻の秒）から都度計算する。
+      (function () {
+        var posted = Number(new URLSearchParams(location.search).get('t'));
+        if (!Number.isFinite(posted) || posted <= 0) return;
+
+        var line = document.getElementById('elapsed');
+        var postedAt = new Date(posted * 1000);
+        var clock = postedAt.toLocaleTimeString('ja-JP', {
+          timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit'
+        });
+
+        function label(minutes) {
+          if (minutes < 1) return 'たった今';
+          if (minutes < 60) return minutes + '分経過';
+          var hours = Math.floor(minutes / 60);
+          if (hours < 24) return hours + '時間経過';
+          return Math.floor(hours / 24) + '日経過';
+        }
+
+        function render() {
+          var minutes = Math.floor((Date.now() - posted * 1000) / 60000);
+          // 未来の時刻や極端に古い値は端末の時計ズレなので出さない
+          if (minutes < 0 || minutes > 60 * 24 * 7) { line.hidden = true; return; }
+
+          line.textContent = '';
+          var big = document.createElement('strong');
+          big.textContent = label(minutes);
+          var sub = document.createElement('span');
+          sub.textContent = clock + ' 時点の情報';
+          line.appendChild(big);
+          line.appendChild(sub);
+          // 30分以上たった情報は鵜呑みにされないよう色を変える
+          line.className = 'elapsed' + (minutes >= 30 ? ' is-stale' : '');
+          line.hidden = false;
+        }
+
+        render();
+        setInterval(render, 30000);
       })();
     </script>
   </body>
