@@ -83,7 +83,7 @@ export function validatePost(input: unknown): ValidationResult {
   }
 
   if (typeof crowd !== 'number' || ![1, 2, 3].includes(crowd)) {
-    return { ok: false, message: 'コスプレイヤーさんの状態を選んでください' };
+    return { ok: false, message: '現在の状態を選んでください' };
   }
 
   const text = typeof body === 'string' ? body.trim() : '';

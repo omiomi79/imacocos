@@ -21,7 +21,7 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
 
   const place = area ? `${area.short}${cell ? ` ${cell}` : ''}` : 'コミケ会場';
   const title = `${place}で${status.label}｜CoCoS`;
-  const description = `コスプレイヤーさんは現在「${status.label}」です。`;
+  const description = `いま「${status.label}」です。`;
   const cardImage = area?.map ? mapCardImage(area.id, cell) : null;
   const image = cardImage ? new URL(cardImage, url.origin).href : null;
   const canonicalUrl = url.href;

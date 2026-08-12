@@ -247,12 +247,12 @@ export function mapCells(map: AreaMap): MapCell[] {
   });
 }
 
-export const COSPLAYER_STATUSES = [
+export const STATUS_OPTIONS = [
   { value: 1, label: '撮影中', emoji: '●', code: 'REC' },
   { value: 2, label: '交流中', emoji: '◎', code: 'TALK' },
   { value: 3, label: '移動中', emoji: '→', code: 'MOVE' },
 ] as const;
 
 export function statusMeta(value: number) {
-  return COSPLAYER_STATUSES.find((status) => status.value === value) ?? COSPLAYER_STATUSES[1];
+  return STATUS_OPTIONS.find((status) => status.value === value) ?? STATUS_OPTIONS[1];
 }

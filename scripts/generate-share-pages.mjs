@@ -3,7 +3,7 @@
 // vite build のあとに実行すること（dist が作り直されるため）。
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { AREAS, COSPLAYER_STATUSES, mapCardImage, mapCells } from '../src/areas.ts';
+import { AREAS, STATUS_OPTIONS, mapCardImage, mapCells } from '../src/areas.ts';
 import { SITE_URL, sharePageSlug } from '../src/siteConfig.ts';
 
 const distDir = join(process.cwd(), 'dist');
@@ -122,14 +122,14 @@ for (const area of AREAS) {
   const cellIds = cells.length > 0 ? cells.map((cell) => cell.id) : [''];
 
   for (const cell of cellIds) {
-    for (const status of COSPLAYER_STATUSES) {
+    for (const status of STATUS_OPTIONS) {
       const slug = sharePageSlug(area.id, cell, status.value);
       const place = `${area.short}${cell ? ` ${cell}` : ''}`;
       const cardImage = mapCardImage(area.id, cell);
 
       const html = renderPage({
         title: `${place}で${status.label}｜CoCoS`,
-        description: `コスプレイヤーさんは現在「${status.label}」です。`,
+        description: `いま「${status.label}」です。`,
         canonical: new URL(`s/${slug}/`, SITE_URL).href,
         image: cardImage ? absoluteUrl(cardImage) : null,
         imageAlt: `${place}の見取り図`,

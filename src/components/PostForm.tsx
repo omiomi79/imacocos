@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   AREAS,
-  COSPLAYER_STATUSES,
+  STATUS_OPTIONS,
   getArea,
   isValidArea,
   mapCardImage,
@@ -112,10 +112,10 @@ export function PostForm() {
       <div className="field">
         <div className="field-label">
           <span className="step-index">02</span>
-          <span>コスプレイヤーさんの状態</span>
+          <span>現在の状態</span>
         </div>
         <div className="status-picker">
-          {COSPLAYER_STATUSES.map((item) => (
+          {STATUS_OPTIONS.map((item) => (
             <button
               key={item.value}
               type="button"
