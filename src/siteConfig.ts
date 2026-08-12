@@ -14,8 +14,26 @@ export function sharePageSlug(areaId: string, cell: string, status: number): str
 /** Xのハンドルの形式。英数字とアンダースコアのみ、15文字まで */
 export const X_ID_PATTERN = /^[A-Za-z0-9_]{1,15}$/;
 
-/** 先頭の @ と前後の空白を落とす。形式が不正なら空文字を返す */
+/** プロフィールURLを貼られたときに、そこからIDだけ取り出す */
+const PROFILE_URL_PATTERN = /^(?:https?:\/\/)?(?:www\.)?(?:x|twitter)\.com\/@?([A-Za-z0-9_]{1,15})\/?$/i;
+
+/**
+ * 入力を X のハンドルに正規化する。形式が不正なら空文字を返す。
+ *
+ * 会場でスマホから打つ前提なので、次はすべて受け付ける:
+ *   - 前後の空白
+ *   - 先頭の @（半角・全角）
+ *   - 日本語入力のままの全角英数字
+ *   - プロフィールURLの貼り付け
+ */
 export function normalizeXId(raw: string): string {
-  const value = raw.trim().replace(/^@/, '');
+  // 全角の ＠Ａ-Ｚａ-ｚ０-９＿ は、コード位置が半角のちょうど 0xFEE0 上にある
+  const halfWidth = raw
+    .trim()
+    .replace(/[＠Ａ-Ｚａ-ｚ０-９＿]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0));
+
+  const fromUrl = PROFILE_URL_PATTERN.exec(halfWidth);
+  const value = fromUrl ? fromUrl[1] : halfWidth.replace(/^@+/, '');
+
   return X_ID_PATTERN.test(value) ? value : '';
 }

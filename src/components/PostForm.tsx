@@ -9,7 +9,7 @@ import {
   statusMeta,
 } from '../areas';
 import { assetPath } from '../assetPath';
-import { SITE_URL, X_ID_PATTERN, normalizeXId, sharePageSlug } from '../siteConfig';
+import { SITE_URL, normalizeXId, sharePageSlug } from '../siteConfig';
 import { AreaMapPicker } from './AreaMapPicker';
 
 const MAX_BODY_LENGTH = 80;
@@ -29,9 +29,9 @@ export function PostForm() {
   // 毎回打ち直さなくて済むよう、一度入れたIDは端末に残す
   const [xId, setXId] = useState(() => localStorage.getItem(X_ID_KEY) ?? '');
 
-  const typedXId = xId.trim().replace(/^@/, '');
-  const xIdValid = typedXId === '' || X_ID_PATTERN.test(typedXId);
+  // 判定と送信で同じ正規化を通す（全角＠やURL貼り付けもここで吸収される）
   const shareXId = normalizeXId(xId);
+  const xIdValid = xId.trim() === '' || shareXId !== '';
 
   const selectedArea = getArea(area);
   const needsCell = selectedArea?.map ? mapCells(selectedArea.map).length > 0 : false;
@@ -178,7 +178,7 @@ export function PostForm() {
         />
         {xIdValid ? (
           <p className="map-help" id="x-id-help">
-            入れると、リンク先のページに「@◯◯ さんの現在地」と出ます。
+            {'入れると、リンク先のページに「@◯◯ さんの現在地」と出ます。@は付けても付けなくても大丈夫です。'}
           </p>
         ) : (
           <p className="field-error" id="x-id-error" role="alert">
