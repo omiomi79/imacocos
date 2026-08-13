@@ -420,11 +420,17 @@ a:focus-visible,
   padding-left: 2px;
 }
 
-/* 選択肢が4つあるので、狭い画面でも文字が潰れないよう2列で折り返す */
+/* 3列だと「向かいます」が入りきらないので2列で折り返す */
 .status-picker {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
+}
+
+/* 奇数個のとき最後の1つが半端に残る。
+   末尾は現在地ではなく予定を表す選択肢なので、全幅にして区切りに見せる */
+.status-picker > :last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .status-btn {

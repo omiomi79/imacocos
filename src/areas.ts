@@ -266,10 +266,12 @@ export function mapCells(map: AreaMap): MapCell[] {
  */
 export const HEADING_STATUS = 4;
 
+// value 3 は「移動中」だった。投稿した時点で既にその場を離れており、
+// 見た人が空振りするうえ人が集まりすぎるため廃止。
+// 過去のURLと意味がずれないよう、番号は詰めずに欠番のままにする。
 export const STATUS_OPTIONS = [
   { value: 1, label: '撮影中', emoji: '●', code: 'REC' },
   { value: 2, label: '交流中', emoji: '◎', code: 'TALK' },
-  { value: 3, label: '移動中', emoji: '→', code: 'MOVE' },
   { value: HEADING_STATUS, label: '向かいます', emoji: '⇢', code: 'HEAD' },
 ] as const;
 
