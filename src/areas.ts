@@ -260,10 +260,17 @@ export function mapCells(map: AreaMap): MapCell[] {
   });
 }
 
+/**
+ * これから向かう状態。まだ到着していないので区画は選ばせず、
+ * 投稿文でも「エリア」ではなく「向かう先」として扱う。
+ */
+export const HEADING_STATUS = 4;
+
 export const STATUS_OPTIONS = [
   { value: 1, label: '撮影中', emoji: '●', code: 'REC' },
   { value: 2, label: '交流中', emoji: '◎', code: 'TALK' },
   { value: 3, label: '移動中', emoji: '→', code: 'MOVE' },
+  { value: HEADING_STATUS, label: '向かいます', emoji: '⇢', code: 'HEAD' },
 ] as const;
 
 export function statusMeta(value: number) {

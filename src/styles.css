@@ -273,6 +273,40 @@ a {
   font-weight: 650;
 }
 
+/* 投稿フォームと役割が違うことが見て分かるよう、見出しの色味を変える */
+.search-panel {
+  margin-top: 22px;
+}
+
+.search-intro {
+  background: linear-gradient(112deg, var(--ink) 0 74%, var(--paper) 74% 100%);
+  color: var(--paper);
+}
+
+.search-intro h2 {
+  margin: 0;
+  font-size: clamp(22px, 5vw, 28px);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.search-intro .kicker,
+.search-intro > p:last-child {
+  color: var(--paper);
+}
+
+.search-intro > p:last-child {
+  max-width: 420px;
+  margin: 9px 0 0;
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.search-submit {
+  justify-content: center;
+  gap: 10px;
+}
+
 .copyright {
   margin: 16px 0 0;
   padding-top: 14px;
@@ -326,9 +360,10 @@ a:focus-visible,
   padding-left: 2px;
 }
 
+/* 選択肢が4つあるので、狭い画面でも文字が潰れないよう2列で折り返す */
 .status-picker {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
 

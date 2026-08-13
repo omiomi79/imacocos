@@ -3,7 +3,7 @@
 // vite build のあとに実行すること（dist が作り直されるため）。
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { AREAS, STATUS_OPTIONS, mapCardImage, mapCells } from '../src/areas.ts';
+import { AREAS, HEADING_STATUS, STATUS_OPTIONS, mapCardImage, mapCells } from '../src/areas.ts';
 import { SITE_URL, sharePageSlug } from '../src/siteConfig.ts';
 
 const distDir = join(process.cwd(), 'dist');
@@ -207,12 +207,23 @@ for (const area of AREAS) {
     continue;
   }
 
+  // 「向かいます」は到着前なので区画を持たない。エリアごとに1枚だけ作る
+  await writePage({
+    slug: sharePageSlug(area.id, '', HEADING_STATUS),
+    title: `${area.short}へ向かっています｜CoCoS`,
+    description: `これから「${area.short}」へ向かいます。`,
+    image: area.map?.image ?? null,
+    imageAlt: `${area.short}の見取り図`,
+  });
+
   const cells = area.map ? mapCells(area.map) : [];
   // 区画を持たないエリア（案内図だけのエリア）はセルなしの1件として扱う
   const cellIds = cells.length > 0 ? cells.map((cell) => cell.id) : [''];
 
   for (const cell of cellIds) {
     for (const status of STATUS_OPTIONS) {
+      if (status.value === HEADING_STATUS) continue;
+
       const place = `${area.short}${cell ? ` ${cell}` : ''}`;
       await writePage({
         slug: sharePageSlug(area.id, cell, status.value),

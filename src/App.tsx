@@ -1,6 +1,7 @@
 import { NOTES } from './areas';
 import { assetPath } from './assetPath';
 import { PostForm } from './components/PostForm';
+import { SearchPanel } from './components/SearchPanel';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
 
       <main>
         <PostForm />
+        <SearchPanel />
       </main>
 
       <footer className="footer">
