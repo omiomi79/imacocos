@@ -61,14 +61,6 @@ export type Area = {
 
 export const AREAS: Area[] = [
   {
-    id: 'east8',
-    label: '東8コスプレエリア（内＋外）',
-    short: '東8',
-    floor: '1F',
-    hours: { day1: '10:30〜16:30', day2: '10:30〜16:00' },
-    map: { image: '/maps/east8.webp', guide: '黄色の建物が東8ホールです。' },
-  },
-  {
     id: 'east8in',
     label: '東8コスプレエリア（内）',
     short: '東8内',

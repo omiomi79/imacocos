@@ -24,7 +24,7 @@ const ja = {
   'post.selectArea': 'エリアを選ぶ',
   'post.areaMeta': '{floor}／1日目 {day1}／2日目 {day2}',
   'post.areaNotice':
-    '黄色の部分はあくまで想定されるエリアであり、当日の状況により異なる場合がございます。おおよその場所として指定するためにご使用ください。また東7・8エリアについては指定がしかねる点、ご了承ください。',
+    '黄色の部分はあくまで想定されるエリアであり、当日の状況により異なる場合がございます。おおよその場所として指定するためにご使用ください。また東7外アンテナサイトについては区画の指定ができない点、ご了承ください。',
   'post.status': '現在の状態',
   'post.note': 'ひとこと',
   'post.xId': 'XのID',
@@ -51,7 +51,6 @@ const ja = {
   'map.mapAlt': '{area}の見取り図',
   'map.guideFallback': 'エリアの案内図です。',
 
-  'area.east8': '東8コスプレエリア（内＋外）',
   'area.east8in': '東8コスプレエリア（内）',
   'area.antenna': '東7外アンテナサイト コスプレエリア',
   'area.garden': '庭園コスプレエリア',
@@ -100,7 +99,7 @@ const en: Record<MessageKey, string> = {
   'post.selectArea': 'Choose an area',
   'post.areaMeta': '{floor} / Day 1 {day1} / Day 2 {day2}',
   'post.areaNotice':
-    'The yellow zones are approximate and may differ on the day. Please use them to indicate a rough location. Note that East 7 and 8 cannot be pinpointed.',
+    'The yellow zones are approximate and may differ on the day. Please use them to indicate a rough location. Note that the Antenna Site cannot be divided into spots.',
   'post.status': 'Current status',
   'post.note': 'Message',
   'post.xId': 'X username',
@@ -127,7 +126,6 @@ const en: Record<MessageKey, string> = {
   'map.mapAlt': 'Map of {area}',
   'map.guideFallback': 'A guide map of the area.',
 
-  'area.east8': 'East Hall 8 Cosplay Area (indoor & outdoor)',
   'area.east8in': 'East Hall 8 Cosplay Area (indoor)',
   'area.antenna': 'Antenna Site Cosplay Area (outside East 7)',
   'area.garden': 'Garden Cosplay Area',
@@ -174,7 +172,7 @@ const zh: Record<MessageKey, string> = {
   'post.selectArea': '选择区域',
   'post.areaMeta': '{floor}／第1天 {day1}／第2天 {day2}',
   'post.areaNotice':
-    '黄色部分仅为预计区域，当天情况可能有所不同。请将其作为大致位置使用。另外，东7・8区域无法指定，敬请谅解。',
+    '黄色部分仅为预计区域，当天情况可能有所不同。请将其作为大致位置使用。另外，东7外天线场地无法划分区块，敬请谅解。',
   'post.status': '当前状态',
   'post.note': '留言',
   'post.xId': 'X的账号',
@@ -200,7 +198,6 @@ const zh: Record<MessageKey, string> = {
   'map.mapAlt': '{area}的平面图',
   'map.guideFallback': '这是区域的指南图。',
 
-  'area.east8': '东8展馆Cosplay区（内＋外）',
   'area.east8in': '东8展馆Cosplay区（内）',
   'area.antenna': '东7外天线场地Cosplay区',
   'area.garden': '庭园Cosplay区',
@@ -246,7 +243,7 @@ const ko: Record<MessageKey, string> = {
   'post.selectArea': '구역 선택',
   'post.areaMeta': '{floor}／1일차 {day1}／2일차 {day2}',
   'post.areaNotice':
-    '노란색 부분은 어디까지나 예상 구역이며 당일 상황에 따라 다를 수 있습니다. 대략적인 위치를 나타내는 용도로 사용해 주세요. 또한 동7・8 구역은 지정할 수 없는 점 양해 부탁드립니다.',
+    '노란색 부분은 어디까지나 예상 구역이며 당일 상황에 따라 다를 수 있습니다. 대략적인 위치를 나타내는 용도로 사용해 주세요. 또한 동7 외부 안테나 사이트는 구역을 나눌 수 없는 점 양해 부탁드립니다.',
   'post.status': '현재 상태',
   'post.note': '한마디',
   'post.xId': 'X 아이디',
@@ -272,7 +269,6 @@ const ko: Record<MessageKey, string> = {
   'map.mapAlt': '{area}의 배치도',
   'map.guideFallback': '구역 안내도입니다.',
 
-  'area.east8': '동8홀 코스프레 구역 (실내＋실외)',
   'area.east8in': '동8홀 코스프레 구역 (실내)',
   'area.antenna': '동7 외부 안테나 사이트 코스프레 구역',
   'area.garden': '정원 코스프레 구역',
@@ -319,7 +315,7 @@ const es: Record<MessageKey, string> = {
   'post.selectArea': 'Elige una zona',
   'post.areaMeta': '{floor} / Día 1 {day1} / Día 2 {day2}',
   'post.areaNotice':
-    'Las zonas amarillas son aproximadas y pueden variar el mismo día. Úsalas para indicar una ubicación aproximada. Ten en cuenta que las zonas Este 7 y 8 no se pueden precisar.',
+    'Las zonas amarillas son aproximadas y pueden variar el mismo día. Úsalas para indicar una ubicación aproximada. Ten en cuenta que Antenna Site no se puede dividir en secciones.',
   'post.status': 'Estado actual',
   'post.note': 'Mensaje',
   'post.xId': 'Usuario de X',
@@ -346,7 +342,6 @@ const es: Record<MessageKey, string> = {
   'map.mapAlt': 'Plano de {area}',
   'map.guideFallback': 'Mapa guía de la zona.',
 
-  'area.east8': 'Zona de cosplay del Pabellón Este 8 (interior y exterior)',
   'area.east8in': 'Zona de cosplay del Pabellón Este 8 (interior)',
   'area.antenna': 'Zona de cosplay Antenna Site (exterior del Este 7)',
   'area.garden': 'Zona de cosplay del jardín',
@@ -393,7 +388,7 @@ const fr: Record<MessageKey, string> = {
   'post.selectArea': 'Choisir une zone',
   'post.areaMeta': '{floor} / Jour 1 {day1} / Jour 2 {day2}',
   'post.areaNotice':
-    "Les zones en jaune sont approximatives et peuvent différer le jour même. Utilisez-les pour indiquer un emplacement approximatif. Les zones Est 7 et 8 ne peuvent pas être précisées.",
+    "Les zones en jaune sont approximatives et peuvent différer le jour même. Utilisez-les pour indiquer un emplacement approximatif. La zone Antenna Site ne peut pas être découpée en emplacements.",
   'post.status': 'Statut actuel',
   'post.note': 'Message',
   'post.xId': 'Identifiant X',
@@ -420,7 +415,6 @@ const fr: Record<MessageKey, string> = {
   'map.mapAlt': 'Plan de {area}',
   'map.guideFallback': "Plan indicatif de la zone.",
 
-  'area.east8': 'Zone cosplay Hall Est 8 (intérieur et extérieur)',
   'area.east8in': 'Zone cosplay Hall Est 8 (intérieur)',
   'area.antenna': "Zone cosplay Antenna Site (extérieur Est 7)",
   'area.garden': 'Zone cosplay du jardin',
