@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import { NOTES } from './areas';
 import { assetPath } from './assetPath';
 import { PostForm } from './components/PostForm';
 import { SearchPanel } from './components/SearchPanel';
+import { LANGUAGES, useI18n, type LanguageCode } from './i18n';
 
 const TABS = [
-  { id: 'post', label: '投稿する', code: 'POST' },
-  { id: 'find', label: '探す', code: 'FIND' },
+  { id: 'post', labelKey: 'tab.post', code: 'POST' },
+  { id: 'find', labelKey: 'tab.find', code: 'FIND' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
 
 export default function App() {
   const [tab, setTab] = useState<TabId>('post');
+  const { lang, setLang, t } = useI18n();
 
   return (
     <div className="app">
@@ -29,7 +30,26 @@ export default function App() {
         </div>
       </header>
 
-      <nav className="tabs" role="tablist" aria-label="画面の切り替え">
+      {/* 何語か分からない人でも探せるよう、見出しは英語で固定する */}
+      <div className="lang-picker">
+        <label className="lang-label" htmlFor="lang-select">
+          Select Language
+        </label>
+        <select
+          id="lang-select"
+          className="select small"
+          value={lang}
+          onChange={(event) => setLang(event.target.value as LanguageCode)}
+        >
+          {LANGUAGES.map((language) => (
+            <option key={language.code} value={language.code}>
+              {language.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <nav className="tabs" role="tablist" aria-label={t('nav.label')}>
         {TABS.map((item) => (
           <button
             key={item.id}
@@ -46,7 +66,7 @@ export default function App() {
             }}
           >
             <span className="tab-code">{item.code}</span>
-            <span className="tab-label">{item.label}</span>
+            <span className="tab-label">{t(item.labelKey)}</span>
           </button>
         ))}
       </nav>
@@ -64,11 +84,10 @@ export default function App() {
       <footer className="footer">
         <p className="footer-code">IMACOCOS // UNOFFICIAL TOOL</p>
         <ul>
-          {NOTES.map((note) => (
-            <li key={note}>{note}</li>
-          ))}
+          <li>{t('footer.note1')}</li>
+          <li>{t('footer.note2')}</li>
         </ul>
-        <p>入力内容は保存されず、Xの投稿画面へ渡されます。個人を特定できる情報や誹謗中傷は書かないでください。</p>
+        <p>{t('footer.privacy')}</p>
         {/* 撮影マナーは、読んでほしい撮影者の目に入る共有ページ側に置いている */}
         <p className="copyright">
           © 2026 おみ（

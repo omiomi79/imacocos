@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
 import { formatJstDateTime } from '../format';
+import { useI18n, type MessageKey } from '../i18n';
 import { normalizeXId } from '../siteConfig';
 
 const X_SEARCH_URL = 'https://x.com/search';
 const HASHTAG = '#ImaCoCoS';
 
 const RANGES = [
-  { value: 1, label: '直近1時間' },
-  { value: 3, label: '直近3時間' },
-  { value: 6, label: '直近6時間' },
-  { value: 0, label: '指定なし' },
-] as const;
+  { value: 1, labelKey: 'search.range1' },
+  { value: 3, labelKey: 'search.range3' },
+  { value: 6, labelKey: 'search.range6' },
+  { value: 0, labelKey: 'search.rangeAny' },
+] as const satisfies readonly { value: number; labelKey: MessageKey }[];
 
 const SCOPES = [
-  { value: 'all', label: 'すべての人', hint: 'タグの付いた投稿を全部' },
-  { value: 'follows', label: 'フォロー中の人だけ', hint: '自分がフォローしている人' },
-] as const;
+  { value: 'all', labelKey: 'search.scopeAll' },
+  { value: 'follows', labelKey: 'search.scopeFollows' },
+] as const satisfies readonly { value: string; labelKey: MessageKey }[];
 
 type Scope = (typeof SCOPES)[number]['value'];
 
@@ -57,6 +58,7 @@ export function buildSearchUrl(
 }
 
 export function SearchPanel() {
+  const { t } = useI18n();
   const [account, setAccount] = useState('');
   const [hours, setHours] = useState<number>(3);
   const [scope, setScope] = useState<Scope>('all');
@@ -73,16 +75,16 @@ export function SearchPanel() {
   const searchUrl = accountValid ? buildSearchUrl(account, hours, scope, now) : undefined;
 
   return (
-    <section className="form card search-panel" aria-label="投稿を探す">
+    <section className="form card search-panel" aria-label={t('search.panelLabel')}>
       <div className="form-intro search-intro">
         <p className="kicker">FIND / WHO / WHEN</p>
-        <h2>いま、どこっす？</h2>
-        <p>投稿された場所をXで探します。アカウントを入れると、その人だけに絞れます。</p>
+        <h2>{t('search.title')}</h2>
+        <p>{t('search.intro')}</p>
       </div>
 
       <div className="field">
         <label className="field-label" htmlFor="search-scope">
-          <span>だれの投稿</span>
+          <span>{t('search.scope')}</span>
         </label>
         <select
           id="search-scope"
@@ -92,19 +94,17 @@ export function SearchPanel() {
         >
           {SCOPES.map((item) => (
             <option key={item.value} value={item.value}>
-              {item.label}
+              {t(item.labelKey)}
             </option>
           ))}
         </select>
-        {scope === 'follows' && (
-          <p className="map-help">Xにログインしている本人のフォローが基準になります。</p>
-        )}
+        {scope === 'follows' && <p className="map-help">{t('search.scopeFollowsHelp')}</p>}
       </div>
 
       <div className="field">
         <label className="field-label" htmlFor="search-account">
-          <span>アカウント</span>
-          <span className="optional">任意</span>
+          <span>{t('search.account')}</span>
+          <span className="optional">{t('common.optional')}</span>
         </label>
         <input
           id="search-account"
@@ -121,20 +121,18 @@ export function SearchPanel() {
         />
         {accountValid ? (
           <p className="map-help">
-            {scope === 'follows'
-              ? '空のままなら、フォロー中の人すべてから探します。'
-              : '空のままなら、投稿した人すべてから探します。'}
+            {t(scope === 'follows' ? 'search.accountHelpFollows' : 'search.accountHelpAll')}
           </p>
         ) : (
           <p className="field-error" role="alert">
-            英数字とアンダースコアのみ、15文字までです
+            {t('post.xIdError')}
           </p>
         )}
       </div>
 
       <div className="field">
         <label className="field-label" htmlFor="search-range">
-          <span>いつの投稿</span>
+          <span>{t('search.range')}</span>
         </label>
         <select
           id="search-range"
@@ -144,14 +142,14 @@ export function SearchPanel() {
         >
           {RANGES.map((range) => (
             <option key={range.value} value={range.value}>
-              {range.label}
+              {t(range.labelKey)}
             </option>
           ))}
         </select>
         {/* Xの検索はUTCで受け取るため、そのままだと9時間ずれた数字が並んで見える */}
         {hours > 0 && (
           <p className="map-help">
-            {formatJstDateTime(now - hours * 60 * 60 * 1000)} 以降の投稿を探します。
+            {t('search.since', { time: formatJstDateTime(now - hours * 60 * 60 * 1000) })}
           </p>
         )}
       </div>
@@ -169,10 +167,10 @@ export function SearchPanel() {
           event.currentTarget.href = buildSearchUrl(account, hours, scope, Date.now());
         }}
       >
-        <span className="x-submit-label">Xで探す</span>
+        <span className="x-submit-label">{t('search.submit')}</span>
         <span aria-hidden="true">↗</span>
       </a>
-      <p className="share-note">新しい順に表示されます。</p>
+      <p className="share-note">{t('search.note')}</p>
     </section>
   );
 }

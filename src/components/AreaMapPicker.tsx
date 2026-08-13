@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { mapCells, type Area } from '../areas';
 import { assetPath } from '../assetPath';
+import { useI18n, type MessageKey } from '../i18n';
 
 type Props = {
   area: Area;
@@ -10,19 +11,22 @@ type Props = {
 
 export function AreaMapPicker({ area, value, onChange }: Props) {
   const labelId = useId();
+  const { t } = useI18n();
   const map = area.map;
   if (!map) return null;
 
   const cells = mapCells(map);
+  const areaName = t(`area.${area.id}` as MessageKey);
 
   if (cells.length === 0) {
     return (
       <div className="map-picker map-guide">
-        <p className="field-label">エリアガイド</p>
+        <p className="field-label">{t('map.guideTitle')}</p>
         <div className="map-stage">
-          <img src={assetPath(map.image)} alt={`${area.label}の案内図`} />
+          <img src={assetPath(map.image)} alt={t('map.guideAlt', { area: areaName })} />
         </div>
-        <p className="map-selection">{'guide' in map ? map.guide : 'エリアの案内図です。'}</p>
+        {/* 案内文は画像に描かれた日本語の説明なので、原文のまま出す */}
+        <p className="map-selection">{'guide' in map && map.guide ? map.guide : t('map.guideFallback')}</p>
       </div>
     );
   }
@@ -30,11 +34,11 @@ export function AreaMapPicker({ area, value, onChange }: Props) {
   return (
     <div className="map-picker">
       <p className="field-label" id={labelId}>
-        マップ上の場所は？
+        {t('map.question')}
       </p>
-      <p className="map-help">だいたいの位置をタップしてください。</p>
+      <p className="map-help">{t('map.help')}</p>
       <div className="map-stage">
-        <img src={assetPath(map.image)} alt={`${area.label}の見取り図`} />
+        <img src={assetPath(map.image)} alt={t('map.mapAlt', { area: areaName })} />
         <svg
           className="map-grid"
           viewBox="0 0 100 100"
@@ -52,7 +56,7 @@ export function AreaMapPicker({ area, value, onChange }: Props) {
                 className={`map-cell ${selected ? 'is-selected' : ''}`}
                 role="radio"
                 aria-checked={selected}
-                aria-label={`場所 ${id}`}
+                aria-label={t('map.cellLabel', { cell: id })}
                 tabIndex={0}
                 onClick={() => onChange(id)}
                 onKeyDown={(event) => {
@@ -72,7 +76,7 @@ export function AreaMapPicker({ area, value, onChange }: Props) {
         </svg>
       </div>
       <p className="map-selection" aria-live="polite">
-        {value ? `選択中: ${value}` : '場所を選択してください'}
+        {value ? t('map.selected', { cell: value }) : t('map.notSelected')}
       </p>
     </div>
   );

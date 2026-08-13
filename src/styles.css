@@ -273,6 +273,31 @@ a {
   font-weight: 650;
 }
 
+.lang-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* 何語の画面か分からない状態でも見つけられるよう、この見出しだけ英語で固定する */
+.lang-label {
+  flex: 0 0 auto;
+  color: var(--ink-soft);
+  font-family: var(--font-tech);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.lang-picker .select {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px 36px 8px 12px;
+  font-size: 14px;
+}
+
 .tabs {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
