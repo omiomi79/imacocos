@@ -52,6 +52,7 @@ const ja = {
   'map.guideFallback': 'エリアの案内図です。',
 
   'area.east8in': '東8コスプレエリア（内）',
+  'area.east8out': '東8外コスプレエリア',
   'area.antenna': '東7外アンテナサイト コスプレエリア',
   'area.garden': '庭園コスプレエリア',
   'area.rooftop': '屋上展示場コスプレエリア',
@@ -127,6 +128,7 @@ const en: Record<MessageKey, string> = {
   'map.guideFallback': 'A guide map of the area.',
 
   'area.east8in': 'East Hall 8 Cosplay Area (indoor)',
+  'area.east8out': 'East Hall 8 Outdoor Cosplay Area',
   'area.antenna': 'Antenna Site Cosplay Area (outside East 7)',
   'area.garden': 'Garden Cosplay Area',
   'area.rooftop': 'Rooftop Exhibition Cosplay Area',
@@ -199,6 +201,7 @@ const zh: Record<MessageKey, string> = {
   'map.guideFallback': '这是区域的指南图。',
 
   'area.east8in': '东8展馆Cosplay区（内）',
+  'area.east8out': '东8展馆外Cosplay区',
   'area.antenna': '东7外天线场地Cosplay区',
   'area.garden': '庭园Cosplay区',
   'area.rooftop': '屋顶展示场Cosplay区',
@@ -270,6 +273,7 @@ const ko: Record<MessageKey, string> = {
   'map.guideFallback': '구역 안내도입니다.',
 
   'area.east8in': '동8홀 코스프레 구역 (실내)',
+  'area.east8out': '동8홀 외부 코스프레 구역',
   'area.antenna': '동7 외부 안테나 사이트 코스프레 구역',
   'area.garden': '정원 코스프레 구역',
   'area.rooftop': '옥상 전시장 코스프레 구역',
@@ -343,6 +347,7 @@ const es: Record<MessageKey, string> = {
   'map.guideFallback': 'Mapa guía de la zona.',
 
   'area.east8in': 'Zona de cosplay del Pabellón Este 8 (interior)',
+  'area.east8out': 'Zona de cosplay exterior del Pabellón Este 8',
   'area.antenna': 'Zona de cosplay Antenna Site (exterior del Este 7)',
   'area.garden': 'Zona de cosplay del jardín',
   'area.rooftop': 'Zona de cosplay de la azotea',
@@ -416,6 +421,7 @@ const fr: Record<MessageKey, string> = {
   'map.guideFallback': "Plan indicatif de la zone.",
 
   'area.east8in': 'Zone cosplay Hall Est 8 (intérieur)',
+  'area.east8out': 'Zone cosplay extérieure du Hall Est 8',
   'area.antenna': "Zone cosplay Antenna Site (extérieur Est 7)",
   'area.garden': 'Zone cosplay du jardin',
   'area.rooftop': 'Zone cosplay du toit-terrasse',
