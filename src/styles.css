@@ -273,14 +273,74 @@ a {
   font-weight: 650;
 }
 
-/* 投稿フォームと役割が違うことが見て分かるよう、見出しの色味を変える */
-.search-panel {
-  margin-top: 22px;
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.search-intro {
-  background: linear-gradient(112deg, var(--ink) 0 74%, var(--paper) 74% 100%);
+.tab {
+  display: grid;
+  gap: 2px;
+  place-items: center;
+  min-height: 58px;
+  padding: 10px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+/* 選択中は沈んで見えるよう、影を消して少し下げる */
+.tab[aria-selected='true'] {
+  background: var(--signal);
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.tab-code {
+  color: var(--ink-soft);
+  font-family: var(--font-tech);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.tab[aria-selected='true'] .tab-code {
+  color: var(--ink);
+}
+
+.tab-label {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+/* 投稿フォームと役割が違うことが見て分かるよう、見出しの色味を変える */
+
+/* 投稿側の斜めグラデーションをそのまま反転すると、明るい側に白文字が乗って読めない。
+   地は黒一色にして、アクセントは文字に干渉しない右上の隅だけに置く。 */
+/* .form-intro はファイル後方のメディアクエリ内でも背景を指定している。
+   クラス1つでは負けるので、両方のクラスで詳細度を上げて確実に打ち消す。 */
+.form-intro.search-intro {
+  position: relative;
+  overflow: hidden;
   color: var(--paper);
+  background-color: var(--ink);
+  background-image: none;
+}
+
+.search-intro::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-color: transparent var(--signal) transparent transparent;
+  border-style: solid;
+  border-width: 0 68px 68px 0;
 }
 
 .search-intro h2 {

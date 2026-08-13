@@ -102,7 +102,7 @@ export function SearchPanel() {
       </div>
 
       <a
-        className={`submit search-submit ${accountValid ? '' : 'is-disabled'}`}
+        className={`submit x-submit search-submit ${accountValid ? '' : 'is-disabled'}`}
         href={searchUrl}
         target="_blank"
         rel="noopener noreferrer"
