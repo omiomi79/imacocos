@@ -13,8 +13,8 @@ export const LANGUAGES = [
 export type LanguageCode = (typeof LANGUAGES)[number]['code'];
 
 const ja = {
-  'tab.post': '投稿する',
-  'tab.find': '探す',
+  'tab.post': '投稿するモード',
+  'tab.find': '探すモード',
 
   'common.optional': '任意',
 
@@ -88,8 +88,8 @@ const ja = {
 export type MessageKey = keyof typeof ja;
 
 const en: Record<MessageKey, string> = {
-  'tab.post': 'Post',
-  'tab.find': 'Find',
+  'tab.post': 'Post mode',
+  'tab.find': 'Find mode',
 
   'common.optional': 'optional',
 
@@ -161,8 +161,8 @@ const en: Record<MessageKey, string> = {
 };
 
 const zh: Record<MessageKey, string> = {
-  'tab.post': '发布',
-  'tab.find': '查找',
+  'tab.post': '发布模式',
+  'tab.find': '查找模式',
 
   'common.optional': '选填',
 
@@ -232,8 +232,8 @@ const zh: Record<MessageKey, string> = {
 };
 
 const ko: Record<MessageKey, string> = {
-  'tab.post': '올리기',
-  'tab.find': '찾기',
+  'tab.post': '올리기 모드',
+  'tab.find': '찾기 모드',
 
   'common.optional': '선택',
 
@@ -304,8 +304,8 @@ const ko: Record<MessageKey, string> = {
 };
 
 const es: Record<MessageKey, string> = {
-  'tab.post': 'Publicar',
-  'tab.find': 'Buscar',
+  'tab.post': 'Modo publicar',
+  'tab.find': 'Modo buscar',
 
   'common.optional': 'opcional',
 
@@ -377,8 +377,8 @@ const es: Record<MessageKey, string> = {
 };
 
 const fr: Record<MessageKey, string> = {
-  'tab.post': 'Publier',
-  'tab.find': 'Chercher',
+  'tab.post': 'Mode publication',
+  'tab.find': 'Mode recherche',
 
   'common.optional': 'facultatif',
 
