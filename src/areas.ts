@@ -69,6 +69,25 @@ export const AREAS: Area[] = [
     map: { image: '/maps/east8.webp', guide: '黄色の建物が東8ホールです。' },
   },
   {
+    id: 'east8in',
+    label: '東8コスプレエリア（内）',
+    short: '東8内',
+    floor: '1F',
+    hours: { day1: '10:30〜16:30', day2: '10:30〜16:00' },
+    map: {
+      image: '/maps/east8in.webp',
+      // 画像上の黄色い区画に合わせた座標
+      quad: [
+        { x: 0.582, y: 0.1 },
+        { x: 0.715, y: 0.094 },
+        { x: 0.62, y: 0.462 },
+        { x: 0.399, y: 0.447 },
+      ],
+      cols: 3,
+      rows: 2,
+    },
+  },
+  {
     id: 'antenna',
     label: '東7外アンテナサイト コスプレエリア',
     short: 'アンテナサイト',
