@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { formatJstDateTime } from '../format';
 import { normalizeXId } from '../siteConfig';
 
 const X_SEARCH_URL = 'https://x.com/search';
@@ -10,6 +11,13 @@ const RANGES = [
   { value: 6, label: '直近6時間' },
   { value: 0, label: '指定なし' },
 ] as const;
+
+const SCOPES = [
+  { value: 'all', label: 'すべての人', hint: 'タグの付いた投稿を全部' },
+  { value: 'follows', label: 'フォロー中の人だけ', hint: '自分がフォローしている人' },
+] as const;
+
+type Scope = (typeof SCOPES)[number]['value'];
 
 /**
  * Xの検索が受け付ける形式（例: 2026-08-15_04:30:00_UTC）に変換する。
@@ -24,9 +32,17 @@ function toSearchTimestamp(ms: number): string {
   );
 }
 
-export function buildSearchUrl(account: string, hours: number, now = Date.now()): string {
+export function buildSearchUrl(
+  account: string,
+  hours: number,
+  scope: Scope = 'all',
+  now = Date.now(),
+): string {
   // 時間の指定は単独では効かないため、必ずタグと組み合わせる
   const terms = [HASHTAG];
+
+  // Xにログインしている本人が「フォローしている相手」を指す
+  if (scope === 'follows') terms.push('filter:follows');
 
   const id = normalizeXId(account);
   if (id) terms.push(`from:${id}`);
@@ -43,10 +59,18 @@ export function buildSearchUrl(account: string, hours: number, now = Date.now())
 export function SearchPanel() {
   const [account, setAccount] = useState('');
   const [hours, setHours] = useState<number>(3);
+  const [scope, setScope] = useState<Scope>('all');
+
+  // 開いたまま放置しても検索範囲がずれないよう、時刻を進めておく
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
 
   const typed = account.trim();
   const accountValid = typed === '' || normalizeXId(account) !== '';
-  const searchUrl = accountValid ? buildSearchUrl(account, hours) : undefined;
+  const searchUrl = accountValid ? buildSearchUrl(account, hours, scope, now) : undefined;
 
   return (
     <section className="form card search-panel" aria-label="投稿を探す">
@@ -54,6 +78,27 @@ export function SearchPanel() {
         <p className="kicker">FIND / WHO / WHEN</p>
         <h2>いま、どこっす？</h2>
         <p>投稿された場所をXで探します。アカウントを入れると、その人だけに絞れます。</p>
+      </div>
+
+      <div className="field">
+        <label className="field-label" htmlFor="search-scope">
+          <span>だれの投稿</span>
+        </label>
+        <select
+          id="search-scope"
+          className="select"
+          value={scope}
+          onChange={(event) => setScope(event.target.value as Scope)}
+        >
+          {SCOPES.map((item) => (
+            <option key={item.value} value={item.value}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+        {scope === 'follows' && (
+          <p className="map-help">Xにログインしている本人のフォローが基準になります。</p>
+        )}
       </div>
 
       <div className="field">
@@ -75,7 +120,11 @@ export function SearchPanel() {
           onChange={(event) => setAccount(event.target.value)}
         />
         {accountValid ? (
-          <p className="map-help">空のままなら、全員の投稿から探します。</p>
+          <p className="map-help">
+            {scope === 'follows'
+              ? '空のままなら、フォロー中の人すべてから探します。'
+              : '空のままなら、投稿した人すべてから探します。'}
+          </p>
         ) : (
           <p className="field-error" role="alert">
             英数字とアンダースコアのみ、15文字までです
@@ -99,6 +148,12 @@ export function SearchPanel() {
             </option>
           ))}
         </select>
+        {/* Xの検索はUTCで受け取るため、そのままだと9時間ずれた数字が並んで見える */}
+        {hours > 0 && (
+          <p className="map-help">
+            {formatJstDateTime(now - hours * 60 * 60 * 1000)} 以降の投稿を探します。
+          </p>
+        )}
       </div>
 
       <a
@@ -108,6 +163,11 @@ export function SearchPanel() {
         rel="noopener noreferrer"
         aria-disabled={!accountValid}
         tabIndex={accountValid ? 0 : -1}
+        onClick={(event) => {
+          if (!accountValid) return;
+          // 表示の更新から時間が経っていることがあるので、押した瞬間で作り直す
+          event.currentTarget.href = buildSearchUrl(account, hours, scope, Date.now());
+        }}
       >
         <span className="x-submit-label">Xで探す</span>
         <span aria-hidden="true">↗</span>
